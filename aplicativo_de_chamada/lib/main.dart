@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 void main() {
   runApp(const MyApp());
@@ -39,6 +40,10 @@ class _MyHomePageState extends State<MyHomePage> {
   bool isStudentCheck = false;
   bool isProfessorCheck = false;
 
+  String nameCadastro = "";
+  String emailCadastro = "";
+  String passwordCadastro = "";
+
   @override
   Widget build(BuildContext context) {
     screenHeight = MediaQuery.of(context).size.height;
@@ -52,6 +57,9 @@ class _MyHomePageState extends State<MyHomePage> {
       return SizedBox(
         width: screenHeight * 0.5,
         child: TextField(
+          onChanged: (text) {
+            nameCadastro = text;
+          },
           decoration: InputDecoration(
               border: OutlineInputBorder(
                 borderSide: const BorderSide(width: 3),
@@ -66,6 +74,9 @@ class _MyHomePageState extends State<MyHomePage> {
       return SizedBox(
         width: screenHeight * 0.5,
         child: TextField(
+          onChanged: (text) {
+            emailCadastro = text;
+          },
           decoration: InputDecoration(
             border: OutlineInputBorder(
               borderSide: const BorderSide(width: 3),
@@ -81,6 +92,10 @@ class _MyHomePageState extends State<MyHomePage> {
       return SizedBox(
         width: screenHeight * 0.5,
         child: TextField(
+          onChanged: (text) {
+            passwordCadastro = text;
+          },
+          obscureText: true,
           decoration: InputDecoration(
             border: OutlineInputBorder(
               borderSide: const BorderSide(width: 3),
@@ -97,8 +112,14 @@ class _MyHomePageState extends State<MyHomePage> {
         minWidth: screenHeight * 0.2,
         height: screenHeight * 0.1,
         child: ElevatedButton(
-          onPressed: () {
-            //rota enviando dados e recarregando paginas
+          onPressed: () async {
+            final url = Uri.parse('http://127.0.0.1:5000/cadastro');
+
+            if(isStudentCheck){
+              await http.post(url, body: {'email': emailCadastro, 'password': passwordCadastro, 'nome': nameCadastro, 'tipo_usuario': 'aluno'});
+            } else {
+              await http.post(url, body: {'email': emailCadastro, 'password': passwordCadastro, 'nome': nameCadastro, 'tipo_usuario': 'professor'});
+            }
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.greenAccent,
