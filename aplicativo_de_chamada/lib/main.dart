@@ -113,7 +113,7 @@ class _MyHomePageState extends State<MyHomePage> {
         height: screenHeight * 0.1,
         child: ElevatedButton(
           onPressed: () async {
-            final url = Uri.parse('http://127.0.0.1:5000/cadastro');
+            final url = Uri.parse('http://10.0.2.2:5000/cadastro');
 
             if(isStudentCheck){
               await http.post(url, body: {'email': emailCadastro, 'password': passwordCadastro, 'nome': nameCadastro, 'tipo_usuario': 'aluno'});
