@@ -98,7 +98,7 @@ class _MyHomePageState extends State<MyHomePage> {
         height: screenHeight * 0.1,
         child: ElevatedButton(
           onPressed: () {
-            //rota enviando dados e recarregando pagina
+            //rota enviando dados e recarregando paginas
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.greenAccent,
