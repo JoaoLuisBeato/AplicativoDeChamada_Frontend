@@ -42,7 +42,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
   String nameCadastro = "";
   String emailCadastro = "";
+  String emailRewriteCadastro = "";
   String passwordCadastro = "";
+  String passwordRewriteCadastro = "";
+
+  String errorTextVal = "";
 
   @override
   Widget build(BuildContext context) {
@@ -88,6 +92,32 @@ class _MyHomePageState extends State<MyHomePage> {
       );
     }
 
+    SizedBox emailRewriteReturn() {
+      return SizedBox(
+        width: screenHeight * 0.5,
+        child: TextField(
+          onChanged: (text) {
+            emailRewriteCadastro = text;
+            setState(() {
+              if(text != emailCadastro){
+                errorTextVal = "Os emails não coincidem.";
+              } else {
+                errorTextVal = "";
+              }
+            });
+          },
+          decoration: InputDecoration(
+            errorText: errorTextVal.isEmpty ? null: errorTextVal,
+            border: OutlineInputBorder(
+              borderSide: const BorderSide(width: 3),
+              borderRadius: BorderRadius.circular(20.0),
+            ),
+            labelText: 'Confirme o email do novo usuário',
+          ),
+        ),
+      );
+    }
+
     SizedBox passwordReturn() {
       return SizedBox(
         width: screenHeight * 0.5,
@@ -102,6 +132,33 @@ class _MyHomePageState extends State<MyHomePage> {
               borderRadius: BorderRadius.circular(20.0),
             ),
             labelText: 'Senha do novo usuário',
+          ),
+        ),
+      );
+    }
+
+    SizedBox passwordRewriteReturn() {
+      return SizedBox(
+        width: screenHeight * 0.5,
+        child: TextField(
+          onChanged: (text) {
+            passwordRewriteCadastro = text;
+            setState(() {
+              if(text != passwordCadastro){
+                errorTextVal = "As senhas não coincidem.";
+              } else {
+                errorTextVal = "";
+              }
+            });
+          },
+          obscureText: true,
+          decoration: InputDecoration(
+            errorText: errorTextVal.isEmpty ? null: errorTextVal,
+            border: OutlineInputBorder(
+              borderSide: const BorderSide(width: 3),
+              borderRadius: BorderRadius.circular(20.0),
+            ),
+            labelText: 'Confirme a senha do novo usuário',
           ),
         ),
       );
@@ -175,17 +232,21 @@ class _MyHomePageState extends State<MyHomePage> {
                   alignment: Alignment.center,
                   child: Text("Cadastro",
                       style: titleStyle, textAlign: TextAlign.center)),
-              SizedBox(height: screenHeight * 0.05),
+              SizedBox(height: screenHeight * 0.03),
               nameReturn(),
-              SizedBox(height: screenHeight * 0.05),
+              SizedBox(height: screenHeight * 0.03),
               emailReturn(),
-              SizedBox(height: screenHeight * 0.05),
+              SizedBox(height: screenHeight * 0.03),
+              emailRewriteReturn(),
+              SizedBox(height: screenHeight * 0.03),
               passwordReturn(),
-              SizedBox(height: screenHeight * 0.05),
+              SizedBox(height: screenHeight * 0.03),
+              passwordRewriteReturn(),
+              SizedBox(height: screenHeight * 0.03),
               checkboxProfessor,
-              SizedBox(height: screenHeight * 0.05),
+              SizedBox(height: screenHeight * 0.03),
               checkboxStudent,
-              SizedBox(height: screenHeight * 0.05),
+              SizedBox(height: screenHeight * 0.03),
               buttonCreateNewUser()
             ],
           ),
