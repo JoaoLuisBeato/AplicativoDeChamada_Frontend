@@ -48,6 +48,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
   String errorTextVal = "";
 
+  TextEditingController usernameTextField = TextEditingController();
+  TextEditingController emailTextField = TextEditingController();
+  TextEditingController emailRewriteTextField = TextEditingController();
+  TextEditingController passwordTextField = TextEditingController();
+  TextEditingController passwordRewriteTextField = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     screenHeight = MediaQuery.of(context).size.height;
@@ -57,6 +63,19 @@ class _MyHomePageState extends State<MyHomePage> {
         fontWeight: FontWeight.bold,
         color: Colors.black);
 
+    void clearFields(){
+
+      setState(() {
+        usernameTextField.clear();
+        emailTextField.clear();
+        emailRewriteTextField.clear();
+        passwordTextField.clear();
+        passwordRewriteTextField.clear();
+        isStudentCheck = false;
+        isProfessorCheck = false;
+      });
+    }
+
     SizedBox nameReturn() {
       return SizedBox(
         width: screenHeight * 0.5,
@@ -64,6 +83,7 @@ class _MyHomePageState extends State<MyHomePage> {
           onChanged: (text) {
             nameCadastro = text;
           },
+          controller: usernameTextField,
           decoration: InputDecoration(
               border: OutlineInputBorder(
                 borderSide: const BorderSide(width: 3),
@@ -80,8 +100,17 @@ class _MyHomePageState extends State<MyHomePage> {
         child: TextField(
           onChanged: (text) {
             emailCadastro = text;
+            setState(() {
+              if(text.contains("@")){
+                errorTextVal = "";
+              } else {
+                errorTextVal = "O email não é válido.";
+              }
+            });
           },
+          controller: emailTextField,
           decoration: InputDecoration(
+            errorText: errorTextVal.isEmpty ? null: errorTextVal,
             border: OutlineInputBorder(
               borderSide: const BorderSide(width: 3),
               borderRadius: BorderRadius.circular(20.0),
@@ -106,6 +135,7 @@ class _MyHomePageState extends State<MyHomePage> {
               }
             });
           },
+          controller: emailRewriteTextField,
           decoration: InputDecoration(
             errorText: errorTextVal.isEmpty ? null: errorTextVal,
             border: OutlineInputBorder(
@@ -126,6 +156,7 @@ class _MyHomePageState extends State<MyHomePage> {
             passwordCadastro = text;
           },
           obscureText: true,
+          controller: passwordTextField,
           decoration: InputDecoration(
             border: OutlineInputBorder(
               borderSide: const BorderSide(width: 3),
@@ -151,6 +182,7 @@ class _MyHomePageState extends State<MyHomePage> {
               }
             });
           },
+          controller: passwordRewriteTextField,
           obscureText: true,
           decoration: InputDecoration(
             errorText: errorTextVal.isEmpty ? null: errorTextVal,
@@ -177,6 +209,8 @@ class _MyHomePageState extends State<MyHomePage> {
             } else {
               await http.post(url, body: {'email': emailCadastro, 'password': passwordCadastro, 'nome': nameCadastro, 'tipo_usuario': 'professor'});
             }
+
+            clearFields();
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.greenAccent,
