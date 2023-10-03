@@ -46,7 +46,8 @@ class _MyHomePageState extends State<MyHomePage> {
   String passwordCadastro = "";
   String passwordRewriteCadastro = "";
 
-  String errorTextVal = "";
+  String errorTextValEmail = "";
+    String errorTextValPassword = "";
 
   TextEditingController usernameTextField = TextEditingController();
   TextEditingController emailTextField = TextEditingController();
@@ -102,15 +103,15 @@ class _MyHomePageState extends State<MyHomePage> {
             emailCadastro = text;
             setState(() {
               if(text.contains("@")){
-                errorTextVal = "";
+                errorTextValEmail = "";
               } else {
-                errorTextVal = "O email não é válido.";
+                errorTextValEmail = "O email não é válido.";
               }
             });
           },
           controller: emailTextField,
           decoration: InputDecoration(
-            errorText: errorTextVal.isEmpty ? null: errorTextVal,
+            errorText: errorTextValEmail.isEmpty ? null: errorTextValEmail,
             border: OutlineInputBorder(
               borderSide: const BorderSide(width: 3),
               borderRadius: BorderRadius.circular(20.0),
@@ -129,15 +130,15 @@ class _MyHomePageState extends State<MyHomePage> {
             emailRewriteCadastro = text;
             setState(() {
               if(text != emailCadastro){
-                errorTextVal = "Os emails não coincidem.";
+                errorTextValEmail = "Os emails não coincidem.";
               } else {
-                errorTextVal = "";
+                errorTextValEmail = "";
               }
             });
           },
           controller: emailRewriteTextField,
           decoration: InputDecoration(
-            errorText: errorTextVal.isEmpty ? null: errorTextVal,
+            errorText: errorTextValEmail.isEmpty ? null: errorTextValEmail,
             border: OutlineInputBorder(
               borderSide: const BorderSide(width: 3),
               borderRadius: BorderRadius.circular(20.0),
@@ -176,16 +177,16 @@ class _MyHomePageState extends State<MyHomePage> {
             passwordRewriteCadastro = text;
             setState(() {
               if(text != passwordCadastro){
-                errorTextVal = "As senhas não coincidem.";
+                errorTextValPassword = "As senhas não coincidem.";
               } else {
-                errorTextVal = "";
+                errorTextValPassword = "";
               }
             });
           },
           controller: passwordRewriteTextField,
           obscureText: true,
           decoration: InputDecoration(
-            errorText: errorTextVal.isEmpty ? null: errorTextVal,
+            errorText: errorTextValPassword.isEmpty ? null: errorTextValPassword,
             border: OutlineInputBorder(
               borderSide: const BorderSide(width: 3),
               borderRadius: BorderRadius.circular(20.0),
