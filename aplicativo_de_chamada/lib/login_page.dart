@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'main.dart';
+import 'user_infos.dart';
 
 class LoginPageCreateState extends StatefulWidget {
   const LoginPageCreateState({super.key});
@@ -64,6 +65,10 @@ class LoginPage extends State<LoginPageCreateState> {
                       MaterialPageRoute(
                           builder: ((context) => const MyHomePage())));
                 } else if (typeUser == 'aluno') {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: ((context) => UserInfosCreateState(emailUser: emailLogin))));
                 } else if (typeUser == 'professor') {}
               },
             ),
