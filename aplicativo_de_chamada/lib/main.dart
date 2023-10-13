@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'login_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,15 +19,13 @@ class MyApp extends StatelessWidget {
             seedColor: const Color.fromARGB(255, 162, 236, 201)),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const LoginPageCreateState(),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
+  const MyHomePage({super.key});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -47,7 +46,7 @@ class _MyHomePageState extends State<MyHomePage> {
   String passwordRewriteCadastro = "";
 
   String errorTextValEmail = "";
-    String errorTextValPassword = "";
+  String errorTextValPassword = "";
 
   TextEditingController usernameTextField = TextEditingController();
   TextEditingController emailTextField = TextEditingController();
@@ -59,13 +58,13 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     screenHeight = MediaQuery.of(context).size.height;
 
-    TextStyle titleStyle = TextStyle(fontFamily: 'DancingScript',
+    TextStyle titleStyle = TextStyle(
+        fontFamily: 'DancingScript',
         fontSize: screenHeight * 0.1,
         fontWeight: FontWeight.bold,
         color: Colors.black);
 
-    void clearFields(){
-
+    void clearFields() {
       setState(() {
         usernameTextField.clear();
         emailTextField.clear();
@@ -102,7 +101,7 @@ class _MyHomePageState extends State<MyHomePage> {
           onChanged: (text) {
             emailCadastro = text;
             setState(() {
-              if(text.contains("@")){
+              if (text.contains("@")) {
                 errorTextValEmail = "";
               } else {
                 errorTextValEmail = "O email não é válido.";
@@ -111,7 +110,7 @@ class _MyHomePageState extends State<MyHomePage> {
           },
           controller: emailTextField,
           decoration: InputDecoration(
-            errorText: errorTextValEmail.isEmpty ? null: errorTextValEmail,
+            errorText: errorTextValEmail.isEmpty ? null : errorTextValEmail,
             border: OutlineInputBorder(
               borderSide: const BorderSide(width: 3),
               borderRadius: BorderRadius.circular(20.0),
@@ -129,7 +128,7 @@ class _MyHomePageState extends State<MyHomePage> {
           onChanged: (text) {
             emailRewriteCadastro = text;
             setState(() {
-              if(text != emailCadastro){
+              if (text != emailCadastro) {
                 errorTextValEmail = "Os emails não coincidem.";
               } else {
                 errorTextValEmail = "";
@@ -138,7 +137,7 @@ class _MyHomePageState extends State<MyHomePage> {
           },
           controller: emailRewriteTextField,
           decoration: InputDecoration(
-            errorText: errorTextValEmail.isEmpty ? null: errorTextValEmail,
+            errorText: errorTextValEmail.isEmpty ? null : errorTextValEmail,
             border: OutlineInputBorder(
               borderSide: const BorderSide(width: 3),
               borderRadius: BorderRadius.circular(20.0),
@@ -176,7 +175,7 @@ class _MyHomePageState extends State<MyHomePage> {
           onChanged: (text) {
             passwordRewriteCadastro = text;
             setState(() {
-              if(text != passwordCadastro){
+              if (text != passwordCadastro) {
                 errorTextValPassword = "As senhas não coincidem.";
               } else {
                 errorTextValPassword = "";
@@ -186,7 +185,8 @@ class _MyHomePageState extends State<MyHomePage> {
           controller: passwordRewriteTextField,
           obscureText: true,
           decoration: InputDecoration(
-            errorText: errorTextValPassword.isEmpty ? null: errorTextValPassword,
+            errorText:
+                errorTextValPassword.isEmpty ? null : errorTextValPassword,
             border: OutlineInputBorder(
               borderSide: const BorderSide(width: 3),
               borderRadius: BorderRadius.circular(20.0),
@@ -205,10 +205,20 @@ class _MyHomePageState extends State<MyHomePage> {
           onPressed: () async {
             final url = Uri.parse('http://10.0.2.2:5000/cadastro');
 
-            if(isStudentCheck){
-              await http.post(url, body: {'email': emailCadastro, 'password': passwordCadastro, 'nome': nameCadastro, 'tipo_usuario': 'aluno'});
+            if (isStudentCheck) {
+              await http.post(url, body: {
+                'email': emailCadastro,
+                'password': passwordCadastro,
+                'nome': nameCadastro,
+                'tipo_usuario': 'aluno'
+              });
             } else {
-              await http.post(url, body: {'email': emailCadastro, 'password': passwordCadastro, 'nome': nameCadastro, 'tipo_usuario': 'professor'});
+              await http.post(url, body: {
+                'email': emailCadastro,
+                'password': passwordCadastro,
+                'nome': nameCadastro,
+                'tipo_usuario': 'professor'
+              });
             }
 
             clearFields();
