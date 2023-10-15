@@ -223,7 +223,14 @@ class LoginPage extends State<LoginPageCreateState> {
               SizedBox(height: screenHeight * 0.05),
               passwordReturn(),
               SizedBox(height: screenHeight * 0.05),
-              buttonLoginUser()
+              buttonLoginUser(),
+              Image.asset(
+                "images/classroom.png", // Substitua pelo caminho correto da sua imagem
+                width:
+                    900, // Defina a largura da imagem de acordo com suas preferências
+                height:
+                    300, // Defina a altura da imagem de acordo com suas preferências
+              ),
             ],
           ),
         ),
