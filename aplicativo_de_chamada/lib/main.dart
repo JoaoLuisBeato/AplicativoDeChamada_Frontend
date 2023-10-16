@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'login_page.dart';
+import 'teacher_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -19,7 +20,7 @@ class MyApp extends StatelessWidget {
             seedColor: const Color.fromARGB(255, 162, 236, 201)),
         useMaterial3: true,
       ),
-      home: const LoginPageCreateState(),
+      home: const TeacherPageStateCall(), //teste com pagina dos professores
     );
   }
 }
