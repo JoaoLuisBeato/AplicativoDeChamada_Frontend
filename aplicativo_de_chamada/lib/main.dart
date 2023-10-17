@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
             seedColor: const Color.fromARGB(255, 162, 236, 201)),
         useMaterial3: true,
       ),
-      home: const TeacherPageStateCall(), //teste com pagina dos professores
+      home: const LoginPageCreateState(),
     );
   }
 }

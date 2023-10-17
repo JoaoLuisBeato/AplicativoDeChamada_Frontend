@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
-import 'create_discipline.dart';
+import 'disciplines_list.dart';
 import 'main.dart';
 
-class TeacherPageStateCall extends StatefulWidget{
+class StudentPageStateCall extends StatefulWidget{
 
   final String emailUser;
 
-  const TeacherPageStateCall({super.key, required this.emailUser});
+  const StudentPageStateCall({super.key, required this.emailUser});
 
   @override
-  TeacherPage createState() => TeacherPage();
+  StudentPage createState() => StudentPage();
 }
 
-class TeacherPage extends State<TeacherPageStateCall>{
+class StudentPage extends State<StudentPageStateCall>{
 
   int _selectedIndex = 0;
 
   List<Widget> getWidgetOptions() {
     return [
-      DisciplineCreateState(emailUser: widget.emailUser,),
+      DisciplineListState(emailUser: widget.emailUser),
       const MyHomePage()
     ];
   }
@@ -32,9 +32,8 @@ class TeacherPage extends State<TeacherPageStateCall>{
   @override
   Widget build(BuildContext context) {
 
-    String emailUser = widget.emailUser;
-
     final widgetOptions = getWidgetOptions();
+    String emailUser = widget.emailUser;
 
     return Scaffold(
       appBar: AppBar(
@@ -51,8 +50,8 @@ class TeacherPage extends State<TeacherPageStateCall>{
         iconSize: 30,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.edit),
-            label: 'Criar matérias',
+            icon: Icon(Icons.check),
+            label: 'Matérias',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.edit),

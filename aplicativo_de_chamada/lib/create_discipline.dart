@@ -3,7 +3,10 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class DisciplineCreateState extends StatefulWidget {
-  const DisciplineCreateState({super.key});
+
+  final String emailUser;
+
+  const DisciplineCreateState({super.key, required this.emailUser});
 
   @override
   State<DisciplineCreateState> createState() => DisciplineCreate();
@@ -33,6 +36,13 @@ class DisciplineCreate extends State<DisciplineCreateState> {
         fontSize: screenHeight * 0.07,
         fontWeight: FontWeight.bold,
         color: Colors.black);
+
+    void clearTextFields() {
+      setState(() {
+        disciplineDescriptionTextFieldController.clear();
+        disciplineTitleTextFieldController.clear();
+      });
+    }
     
     SizedBox disciplineTitleTextField() {
       return SizedBox(
@@ -91,12 +101,13 @@ class DisciplineCreate extends State<DisciplineCreateState> {
 
             final response = await http.post(url, body: {
               'Nome_materia': disciplineTitle,
-              'Nome_professor': disciplineTitle, // trocar dps ou por email ou fazer request de nome
+              'Nome_professor': widget.emailUser,
               'Ementa': disciplineDescription
             });
 
             //criar caixa de dialogo se resposta for 200 ou outra
             //limpar campos
+            clearTextFields();
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.greenAccent,
