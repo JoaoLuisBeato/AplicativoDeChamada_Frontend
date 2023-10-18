@@ -16,6 +16,8 @@ class DisciplineList extends State<DisciplineListState> {
   late double fontSizeAsPercentage;
   late TextStyle titleStyle;
 
+  bool subscribeButtonVisibility = true;
+
   List<dynamic> dataListDisciplines = [];
 
   TextStyle style = const TextStyle(
@@ -36,7 +38,19 @@ class DisciplineList extends State<DisciplineListState> {
 
     setState(() {
       dataListDisciplines = json.decode(response.body);
-      print(dataListDisciplines);
+    });
+  }
+
+  Future<void> checkSubcribedUserOnDiscipline(String idToSendForSubscription) async {
+    final response =
+      await http.post(Uri.parse('http://10.0.2.2:5000/verificar_inscricao'), body: {'Email': widget.emailUser, 'ID_materia': idToSendForSubscription});
+
+    setState(() {
+      if(json.decode(response.body) == "False"){
+        subscribeButtonVisibility = true;
+      } else {
+        subscribeButtonVisibility = false;
+      }
     });
   }
 
@@ -44,42 +58,53 @@ class DisciplineList extends State<DisciplineListState> {
   Widget build(BuildContext context) {
     screenHeight = MediaQuery.of(context).size.height;
 
-    TextButton popOutShowDialog(BuildContext context){
+    TextButton popOutShowDialog(BuildContext context) {
       return TextButton(
-              child: const Text('Voltar'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            );
+        child: const Text('Voltar'),
+        onPressed: () {
+          Navigator.of(context).pop();
+        },
+      );
     }
 
-    TextButton subscribeShowDialog(BuildContext context){
-      return TextButton(
-              child: const Text('Inscrever-se'),
-              onPressed: () {
-                //rota que envia dados do aluno
-                Navigator.of(context).pop();
-              },
-            );
+    Visibility subscribeShowDialog(BuildContext context, String idToSendForSubscription) {
+
+      return Visibility(
+        visible: subscribeButtonVisibility,
+        child: TextButton(
+        child: const Text('Inscrever-se'),
+        onPressed: () async {
+            final url = Uri.parse('http://10.0.2.2:5000/Materia_Aluno');
+
+            await http.post(url, body: {
+              'Nome': widget.emailUser,
+              'Materia': idToSendForSubscription,
+            });
+            subscribeButtonVisibility = false;
+
+          if (!mounted) return;
+            Navigator.of(context).pop();
+        },
+      ),
+      );
     }
 
-    //depois criar lógica de visibilidade inscrever e desinscrever
+    Future<void> showDisciplinePopUpDialog(BuildContext context, String idToSendForSubscription) async {
 
-    Future<void> showDisciplinePopUpDialog(BuildContext context){
-    return showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('O que deseja fazer'),
-          content: const Text('Escolha uma das opções abaixo'),
-          actions: <Widget>[
-            popOutShowDialog(context),
-            subscribeShowDialog(context)
-          ],
-        );
-      },
-    );
-  }
+      return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('O que deseja fazer'),
+            content: const Text('Escolha uma das opções abaixo'),
+            actions: <Widget>[
+              popOutShowDialog(context),
+              subscribeShowDialog(context, idToSendForSubscription)
+            ],
+          );
+        },
+      );
+    }
 
     Column returnListTile(index) {
       return Column(children: [
@@ -92,11 +117,17 @@ class DisciplineList extends State<DisciplineListState> {
                 child: Text(dataListDisciplines[index]['nome_materias'],
                     style: style),
               ),
-              Padding(
-                padding: const EdgeInsets.only(top: 10, left: 100),
-                child: Text(
-                    "ID: " + dataListDisciplines[index]['codigo_materias'],
-                    style: idStyle),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 10, right: 10),
+                  child: Align(
+                    alignment: Alignment.topRight,
+                    child: Text(
+                      "ID: " + dataListDisciplines[index]['codigo_materias'],
+                      style: idStyle, 
+                    ),
+                  ),
+                ),
               ),
             ]),
             subtitle: Column(
@@ -108,8 +139,11 @@ class DisciplineList extends State<DisciplineListState> {
                     child: Text(dataListDisciplines[index]['ementa_materias']),
                   ),
                 ]),
-            onTap: () {
-              showDisciplinePopUpDialog(context);
+            onTap: () async {
+                checkSubcribedUserOnDiscipline(dataListDisciplines[index]['codigo_materias']);
+                await Future.delayed(const Duration(seconds: 1));
+                if (!mounted) return;
+                showDisciplinePopUpDialog(context, dataListDisciplines[index]['codigo_materias']);
             },
           ),
         ),

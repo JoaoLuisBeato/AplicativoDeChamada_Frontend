@@ -27,6 +27,45 @@ class DisciplineCreate extends State<DisciplineCreateState> {
     String errorTextValDiscipline = '';
     String errorTextValDisciplineDescription = '';
 
+    Future<void> confirmPopUpDialog(BuildContext context) async {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Matéria criada com sucesso!'),
+          content: const Text('A matéria já foi listada para os alunos'),
+          actions: <Widget>[
+              popOutShowDialog(context)
+            ],
+          );
+        },
+      );
+    }
+
+    Future<void> createErrorPopUpDialog(BuildContext context) async {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Erro ao criar matéria'),
+          content: const Text('Campos não foram preenchidos corretamente'),
+          actions: <Widget>[
+              popOutShowDialog(context)
+            ],
+          );
+        },
+      );
+    }
+
+    TextButton popOutShowDialog(BuildContext context){
+      return TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            );
+    }
+
   @override
   Widget build(BuildContext context) {
     screenHeight = MediaQuery.of(context).size.height;
@@ -50,9 +89,6 @@ class DisciplineCreate extends State<DisciplineCreateState> {
         child: TextField(
           onChanged: (text) {
             disciplineTitle = text;
-            setState(() {
-              //colocar verificaçao de campo vazio
-            });
           },
           controller: disciplineTitleTextFieldController,
           decoration: InputDecoration(
@@ -73,9 +109,6 @@ class DisciplineCreate extends State<DisciplineCreateState> {
         child: TextField(
           onChanged: (text) {
             disciplineDescription = text;
-            setState(() {
-              //colocar verificaçao de campo vazio
-            });
           },
           controller: disciplineDescriptionTextFieldController,
           maxLines: null,
@@ -97,17 +130,23 @@ class DisciplineCreate extends State<DisciplineCreateState> {
         height: screenHeight * 0.1,
         child: ElevatedButton(
           onPressed: () async {
-            final url = Uri.parse('http://10.0.2.2:5000/Registrar_materia');
 
-            final response = await http.post(url, body: {
-              'Nome_materia': disciplineTitle,
-              'Nome_professor': widget.emailUser,
-              'Ementa': disciplineDescription
-            });
+            if(disciplineTitleTextFieldController.text.isEmpty || disciplineDescriptionTextFieldController.text.isEmpty){
+              if (!mounted) return;
+                createErrorPopUpDialog(context);
+            } else {
+              final url = Uri.parse('http://10.0.2.2:5000/Registrar_materia');
 
-            //criar caixa de dialogo se resposta for 200 ou outra
-            //limpar campos
-            clearTextFields();
+              await http.post(url, body: {
+                'Nome_materia': disciplineTitle,
+                'Nome_professor': widget.emailUser,
+                'Ementa': disciplineDescription
+              });
+
+              if (!mounted) return;
+                confirmPopUpDialog(context);
+              clearTextFields();
+            }
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.greenAccent,

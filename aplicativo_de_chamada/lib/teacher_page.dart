@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'create_discipline.dart';
+import 'list_students_discipline.dart';
 import 'main.dart';
 
 class TeacherPageStateCall extends StatefulWidget{
@@ -18,7 +19,8 @@ class TeacherPage extends State<TeacherPageStateCall>{
 
   List<Widget> getWidgetOptions() {
     return [
-      DisciplineCreateState(emailUser: widget.emailUser,),
+      DisciplineCreateState(emailUser: widget.emailUser),
+      ListStudentsForEachDisciplineState(emailUser: widget.emailUser),
       const MyHomePage()
     ];
   }
@@ -55,8 +57,12 @@ class TeacherPage extends State<TeacherPageStateCall>{
             label: 'Criar matérias',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.edit),
-            label: 'Cadastro',    //coloquei cadastro só para inicializar a bottombar
+            icon: Icon(Icons.storage),
+            label: 'Lista de alunos',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.account_circle),
+            label: 'Cadastro',
           ),
         ],
         currentIndex: _selectedIndex,
