@@ -173,7 +173,7 @@ class LoginPage extends State<LoginPageCreateState> {
         height: screenHeight * 0.1,
         child: ElevatedButton(
           onPressed: () async {
-            final url = Uri.parse('http://10.0.2.2:5000/login');
+            final url = Uri.parse('http://https://chamada-backend-develop.onrender.com/login');
 
             final response = await http.post(url, body: {
               'email': emailLogin,

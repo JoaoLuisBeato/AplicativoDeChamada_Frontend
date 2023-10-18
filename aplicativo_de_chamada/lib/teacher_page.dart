@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'create_discipline.dart';
 import 'list_students_discipline.dart';
+import 'user_information.dart';
 import 'main.dart';
 
 class TeacherPageStateCall extends StatefulWidget{
@@ -21,7 +22,8 @@ class TeacherPage extends State<TeacherPageStateCall>{
     return [
       DisciplineCreateState(emailUser: widget.emailUser),
       ListStudentsForEachDisciplineState(emailUser: widget.emailUser),
-      const MyHomePage()
+      const MyHomePage(),
+      UserInformationPageState(emailUser: widget.emailUser)
     ];
   }
 
@@ -61,8 +63,12 @@ class TeacherPage extends State<TeacherPageStateCall>{
             label: 'Lista de alunos',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.account_circle),
+            icon: Icon(Icons.art_track),
             label: 'Cadastro',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.account_circle),
+            label: 'Usuário',
           ),
         ],
         currentIndex: _selectedIndex,

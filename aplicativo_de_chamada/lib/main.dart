@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'login_page.dart';
-import 'teacher_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -203,7 +202,7 @@ class _MyHomePageState extends State<MyHomePage> {
         height: screenHeight * 0.1,
         child: ElevatedButton(
           onPressed: () async {
-            final url = Uri.parse('http://10.0.2.2:5000/cadastro');
+            final url = Uri.parse('http://https://chamada-backend-develop.onrender.com/cadastro');
 
             if (isStudentCheck) {
               await http.post(url, body: {

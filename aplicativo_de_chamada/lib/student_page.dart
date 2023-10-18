@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'disciplines_list.dart';
-import 'main.dart';
+import 'user_information.dart';
 
 class StudentPageStateCall extends StatefulWidget{
 
@@ -19,7 +19,7 @@ class StudentPage extends State<StudentPageStateCall>{
   List<Widget> getWidgetOptions() {
     return [
       DisciplineListState(emailUser: widget.emailUser),
-      const MyHomePage()
+      UserInformationPageState(emailUser: widget.emailUser)
     ];
   }
 
@@ -54,8 +54,8 @@ class StudentPage extends State<StudentPageStateCall>{
             label: 'Matérias',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.edit),
-            label: 'Cadastro',    //coloquei cadastro só para inicializar a bottombar
+            icon: Icon(Icons.account_circle),
+            label: 'Usuário',
           ),
         ],
         currentIndex: _selectedIndex,
