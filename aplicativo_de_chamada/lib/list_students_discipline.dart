@@ -32,7 +32,7 @@ class ListStudentsForEachDiscipline
 
   Future<void> fetchDataFromAPI() async {
     final response = await http.post(
-        Uri.parse('https://chamada-backend-develop.onrender.com/retorna_materias_professor'),
+        Uri.parse('https://chamada-backend.onrender.com/retorna_materias_professor'),
         body: {'Email': widget.emailUser});
 
     setState(() {
@@ -46,7 +46,7 @@ class ListStudentsForEachDiscipline
 
   Future<void> fetchStudentsFromDiscipline(String disciplineForCheckStudents) async {
     final response = await http.post(
-        Uri.parse('https://chamada-backend-develop.onrender.com/return_alunos_materias'),
+        Uri.parse('https://chamada-backend.onrender.com/return_alunos_materias'),
         body: {'materia_escolhida': disciplineForCheckStudents});
 
     setState(() {

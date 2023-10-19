@@ -54,6 +54,45 @@ class _MyHomePageState extends State<MyHomePage> {
   TextEditingController passwordTextField = TextEditingController();
   TextEditingController passwordRewriteTextField = TextEditingController();
 
+  Future<void> confirmPopUpDialog(BuildContext context) async {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Cadastro feito com sucesso!'),
+          content: const Text('O usuário já está disponível.'),
+          actions: <Widget>[
+              popOutShowDialog(context)
+            ],
+          );
+        },
+      );
+    }
+
+    Future<void> createErrorPopUpDialog(BuildContext context) async {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Erro ao criar usuário'),
+          content: const Text('Campos não foram preenchidos corretamente'),
+          actions: <Widget>[
+              popOutShowDialog(context)
+            ],
+          );
+        },
+      );
+    }
+
+    TextButton popOutShowDialog(BuildContext context){
+      return TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            );
+    }
+
   @override
   Widget build(BuildContext context) {
     screenHeight = MediaQuery.of(context).size.height;
@@ -203,7 +242,19 @@ class _MyHomePageState extends State<MyHomePage> {
         height: screenHeight * 0.1,
         child: ElevatedButton(
           onPressed: () async {
-            final url = Uri.parse('https://chamada-backend-develop.onrender.com/cadastro');
+
+            if(usernameTextField.text.isEmpty || emailTextField.text.isEmpty ||
+              emailRewriteTextField.text.isEmpty || passwordRewriteTextField.text.isEmpty || passwordTextField.text.isEmpty){
+                
+                createErrorPopUpDialog(context);
+            } else if(emailCadastro != emailRewriteCadastro || passwordCadastro != passwordRewriteCadastro){
+              
+              createErrorPopUpDialog(context);
+            } else if(isProfessorCheck == false && isStudentCheck == false){
+              
+              createErrorPopUpDialog(context);
+            } else {
+            final url = Uri.parse('https://chamada-backend.onrender.com/cadastro');
 
             if (isStudentCheck) {
               await http.post(url, body: {
@@ -218,7 +269,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 'password': passwordCadastro,
                 'nome': nameCadastro,
                 'tipo_usuario': 'professor'
-              });
+                });
+              }
+
+              if (!mounted) return;
+              confirmPopUpDialog(context);
             }
 
             clearFields();
