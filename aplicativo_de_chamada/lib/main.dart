@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'login_page.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 
@@ -202,7 +203,7 @@ class _MyHomePageState extends State<MyHomePage> {
         height: screenHeight * 0.1,
         child: ElevatedButton(
           onPressed: () async {
-            final url = Uri.parse('http://https://chamada-backend-develop.onrender.com/cadastro');
+            final url = Uri.parse('https://chamada-backend-develop.onrender.com/cadastro');
 
             if (isStudentCheck) {
               await http.post(url, body: {

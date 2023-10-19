@@ -26,7 +26,7 @@ class UserInformationPage extends State<UserInformationPageState> {
 
   Future<void> fetchDataFromAPI() async {
 
-    final url = Uri.parse('http://https://chamada-backend-develop.onrender.com/ReturnInfoGerais');
+    final url = Uri.parse('https://chamada-backend-develop.onrender.com/ReturnInfoGerais');
 
     final response = await http.post(url , body: {
               'email': widget.emailUser,

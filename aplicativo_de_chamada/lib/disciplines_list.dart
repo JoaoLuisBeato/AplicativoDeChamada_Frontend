@@ -34,7 +34,7 @@ class DisciplineList extends State<DisciplineListState> {
 
   Future<void> fetchDataFromAPI() async {
     final response =
-        await http.post(Uri.parse('http://https://chamada-backend-develop.onrender.com/return_materias'));
+        await http.post(Uri.parse('https://chamada-backend-develop.onrender.com/return_materias'));
 
     setState(() {
       dataListDisciplines = json.decode(response.body);
@@ -43,7 +43,7 @@ class DisciplineList extends State<DisciplineListState> {
 
   Future<void> checkSubcribedUserOnDiscipline(String idToSendForSubscription) async {
     final response =
-      await http.post(Uri.parse('http://https://chamada-backend-develop.onrender.com/verificar_inscricao'), body: {'Email': widget.emailUser, 'ID_materia': idToSendForSubscription});
+      await http.post(Uri.parse('https://chamada-backend-develop.onrender.com/verificar_inscricao'), body: {'Email': widget.emailUser, 'ID_materia': idToSendForSubscription});
 
     setState(() {
       if(json.decode(response.body) == "False"){
@@ -74,7 +74,7 @@ class DisciplineList extends State<DisciplineListState> {
         child: TextButton(
         child: const Text('Inscrever-se'),
         onPressed: () async {
-            final url = Uri.parse('http://https://chamada-backend-develop.onrender.com/Materia_Aluno');
+            final url = Uri.parse('https://chamada-backend-develop.onrender.com/Materia_Aluno');
 
             await http.post(url, body: {
               'Nome': widget.emailUser,

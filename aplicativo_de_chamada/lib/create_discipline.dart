@@ -134,7 +134,7 @@ class DisciplineCreate extends State<DisciplineCreateState> {
               if (!mounted) return;
                 createErrorPopUpDialog(context);
             } else {
-              final url = Uri.parse('http://https://chamada-backend-develop.onrender.com/Registrar_materia');
+              final url = Uri.parse('https://chamada-backend-develop.onrender.com/Registrar_materia');
 
               await http.post(url, body: {
                 'Nome_materia': disciplineTitle,
