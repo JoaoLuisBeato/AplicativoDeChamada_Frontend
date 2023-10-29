@@ -31,7 +31,7 @@ class ListStudentsForEachDiscipline
 
   Future<void> fetchDataFromAPI() async {
     final response = await http.post(
-        Uri.parse('https://chamada-backend.onrender.com/retorna_materias_professor'),
+        Uri.parse('https://chamada-backend-sy8c.onrender.com/retorna_materias_professor'),
         body: {'Email': widget.emailUser});
 
     setState(() {

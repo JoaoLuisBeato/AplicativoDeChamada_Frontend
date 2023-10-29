@@ -254,7 +254,7 @@ class _MyHomePageState extends State<MyHomePage> {
               
               createErrorPopUpDialog(context);
             } else {
-            final url = Uri.parse('https://chamada-backend.onrender.com/cadastro');
+            final url = Uri.parse('https://chamada-backend-sy8c.onrender.com/cadastro');
 
             if (isStudentCheck) {
               await http.post(url, body: {
