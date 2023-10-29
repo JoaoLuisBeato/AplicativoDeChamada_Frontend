@@ -217,7 +217,7 @@ class CodeInsertCheck extends State<PresenceForStudentCheckState> {
                       style: titleStyle, textAlign: TextAlign.center)),
               const SizedBox(height: 30),
               dropDownDisciplineButton(),
-              const SizedBox(height: 20),
+              const SizedBox(height: 30),
               codeToInsertTextField(),
               const SizedBox(height: 20),
               buttonGetPresence()//trocar para botao que envia o código
