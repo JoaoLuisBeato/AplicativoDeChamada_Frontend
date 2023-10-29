@@ -19,7 +19,6 @@ class ListStudentsForEachDiscipline
   List<dynamic> disciplinesForTeacherListDynamic = [];
   List<String> disciplinesForTeacherList = [];
   List<dynamic> studentsSubscribedOnDisciplineListDynamic = [];
-  List<String> studentsSubscribedOnDiscipline = [];
 
   int selectedIndexOnDropdownList = 0;
   String selectedDisciplineOnDropdownList = "Escolha a matéria";
@@ -46,16 +45,11 @@ class ListStudentsForEachDiscipline
 
   Future<void> fetchStudentsFromDiscipline(String disciplineForCheckStudents) async {
     final response = await http.post(
-        Uri.parse('https://chamada-backend.onrender.com/return_alunos_materias'),
+        Uri.parse('https://chamada-backend-sy8c.onrender.com/return_presenca_pela_materia'),
         body: {'materia_escolhida': disciplineForCheckStudents});
 
     setState(() {
-      studentsSubscribedOnDiscipline = [];
-      studentsSubscribedOnDisciplineListDynamic = json.decode(response.body);
-
-      for (int i = 0; i < studentsSubscribedOnDisciplineListDynamic.length; i++) {
-        studentsSubscribedOnDiscipline.add(studentsSubscribedOnDisciplineListDynamic[i]['nome_aluno']);
-      }
+      studentsSubscribedOnDisciplineListDynamic = json.decode(response.body);   //atualizar com rota do jao nova
     });
   }
 
@@ -67,13 +61,19 @@ class ListStudentsForEachDiscipline
         const TextStyle(fontWeight: FontWeight.normal, color: Colors.black);
 
     TextStyle style = const TextStyle(
-      fontSize: 30, fontWeight: FontWeight.normal, color: Colors.black);
+      fontSize: 20, fontWeight: FontWeight.normal, color: Colors.black);
+
+    TextStyle freqStyle = const TextStyle(
+      fontSize: 15, fontWeight: FontWeight.normal, color: Colors.black);
 
     TextStyle titleStyle = TextStyle(
         fontFamily: 'DancingScript',
         fontSize: screenHeight * 0.05,
         fontWeight: FontWeight.bold,
         color: Colors.black);
+
+    TextStyle idStyle = const TextStyle(
+      fontSize: 12, fontWeight: FontWeight.normal, color: Colors.black);
 
     Center dropDownDisciplineButton() {
       return Center(
@@ -111,10 +111,31 @@ class ListStudentsForEachDiscipline
               Padding(
                 padding: const EdgeInsets.only(left: 10, top: 10),
                 child: Text(
-                  studentsSubscribedOnDiscipline[index], style: style,
+                  studentsSubscribedOnDisciplineListDynamic[index][0], style: style,
                 ),
-              )
+              ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 10, right: 10),
+                  child: Align(
+                    alignment: Alignment.topRight,
+                    child: Text(
+                      "RA: ${studentsSubscribedOnDisciplineListDynamic[index][1]}",
+                      style: idStyle, 
+                    ),
+                  ),
+                ),
+              ),
             ]),
+            subtitle: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10, top: 10),
+                    child: Text("Frequência: ${studentsSubscribedOnDisciplineListDynamic[index][2]}", style: freqStyle,),
+                  ),
+                ]),
           ),
         ),
         const Padding(
@@ -146,7 +167,7 @@ class ListStudentsForEachDiscipline
                 width: 1200,
                 height: screenHeight * 0.6,
                 child: ListView.builder(
-                  itemCount: studentsSubscribedOnDiscipline.length,
+                  itemCount: studentsSubscribedOnDisciplineListDynamic.length,
                   itemBuilder: (context, index) {
                     return returnListTileWithStudents(index);
                   },
