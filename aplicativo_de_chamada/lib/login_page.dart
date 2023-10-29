@@ -1,7 +1,9 @@
+import 'package:aplicativo_de_chamada/student_page.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'main.dart';
+import 'teacher_page.dart';
 
 class LoginPageCreateState extends StatefulWidget {
   const LoginPageCreateState({super.key});
@@ -64,7 +66,15 @@ class LoginPage extends State<LoginPageCreateState> {
                       MaterialPageRoute(
                           builder: ((context) => const MyHomePage())));
                 } else if (typeUser == 'aluno') {
-                } else if (typeUser == 'professor') {}
+                   Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: ((context) => StudentPageStateCall(emailUser: emailLogin))));
+                } else if (typeUser == 'professor') {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: ((context) => TeacherPageStateCall(emailUser: emailLogin))));}
               },
             ),
           ],
@@ -163,7 +173,7 @@ class LoginPage extends State<LoginPageCreateState> {
         height: screenHeight * 0.1,
         child: ElevatedButton(
           onPressed: () async {
-            final url = Uri.parse('http://10.0.2.2:5000/login');
+            final url = Uri.parse('https://chamada-backend.onrender.com/login');
 
             final response = await http.post(url, body: {
               'email': emailLogin,
@@ -225,7 +235,7 @@ class LoginPage extends State<LoginPageCreateState> {
               SizedBox(height: screenHeight * 0.05),
               buttonLoginUser(),
               Image.asset(
-                "images/classroom.png", // Substitua pelo caminho correto da sua imagem
+                "assets/images/classroom.png", // Substitua pelo caminho correto da sua imagem
                 width:
                     900, // Defina a largura da imagem de acordo com suas preferências
                 height:
