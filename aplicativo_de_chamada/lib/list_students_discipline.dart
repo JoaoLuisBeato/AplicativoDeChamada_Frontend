@@ -20,6 +20,8 @@ class ListStudentsForEachDiscipline
   List<String> disciplinesForTeacherList = [];
   List<dynamic> studentsSubscribedOnDisciplineListDynamic = [];
 
+  bool representativeButtonVisibility = true;
+
   int selectedIndexOnDropdownList = 0;
   String selectedDisciplineOnDropdownList = "Escolha a matéria";
 
@@ -49,9 +51,55 @@ class ListStudentsForEachDiscipline
         body: {'materia_escolhida': disciplineForCheckStudents});
 
     setState(() {
-      studentsSubscribedOnDisciplineListDynamic = json.decode(response.body);   //atualizar com rota do jao nova
+      studentsSubscribedOnDisciplineListDynamic = json.decode(response.body);
     });
   }
+
+  Future<void> showRepresentativePopUpDialog(BuildContext context, String representativeStudent) async {
+      return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Designar representante?'),
+            content: const Text('Escolha uma das opções abaixo'),
+            actions: <Widget>[
+              popOutShowDialog(context),
+              representativeButtonShowDialog(context, representativeStudent)
+            ],
+          );
+        },
+      );
+    }
+
+    Visibility representativeButtonShowDialog(BuildContext context, String representativeStudent) {
+
+      return Visibility(
+        visible: representativeButtonVisibility,
+        child: TextButton(
+        child: const Text('Designar'),
+        onPressed: () async {
+            final url = Uri.parse('https://chamada-backend-sy8c.onrender.com/representante');
+
+            await http.post(url, body: {
+              'Nome': representativeStudent,
+            });
+            representativeButtonVisibility = false;
+
+          if (!mounted) return;
+            Navigator.of(context).pop();
+        },
+      ),
+      );
+    }
+
+    TextButton popOutShowDialog(BuildContext context) {
+      return TextButton(
+        child: const Text('Voltar'),
+        onPressed: () {
+          Navigator.of(context).pop();
+        },
+      );
+    }
 
   @override
   Widget build(BuildContext context) {
@@ -103,6 +151,11 @@ class ListStudentsForEachDiscipline
     }
 
     Column returnListTileWithStudents(index) {
+
+      if (studentsSubscribedOnDisciplineListDynamic[index][3] == "True"){
+        style = const TextStyle(fontSize: 20, fontWeight: FontWeight.normal, color: Colors.red);
+      }
+
       return Column(children: [
         Container(
           width: screenHeight * 0.75,
@@ -111,7 +164,7 @@ class ListStudentsForEachDiscipline
               Padding(
                 padding: const EdgeInsets.only(left: 10, top: 10),
                 child: Text(
-                  studentsSubscribedOnDisciplineListDynamic[index][0], style: style,
+                  studentsSubscribedOnDisciplineListDynamic[index][0], style: style,    //vai verificar se é representante, novo style
                 ),
               ),
               Expanded(
@@ -136,6 +189,10 @@ class ListStudentsForEachDiscipline
                     child: Text("Frequência: ${studentsSubscribedOnDisciplineListDynamic[index][2]}", style: freqStyle,),
                   ),
                 ]),
+
+                onTap: () async {
+                  showRepresentativePopUpDialog(context, studentsSubscribedOnDisciplineListDynamic[index][0]);
+            },
           ),
         ),
         const Padding(

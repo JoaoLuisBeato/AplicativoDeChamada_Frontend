@@ -27,6 +27,12 @@ class RowCallCreate extends State<RowCallCreateState> with AutomaticKeepAliveCli
   int selectedIndexOnDropdownList = 0;
   String selectedDisciplineOnDropdownList = "Escolha a matéria";
 
+  String givenClassTitle = '';
+  String givenClassDescription = '';
+
+  TextEditingController givenClassTitleTextFieldController = TextEditingController();
+  TextEditingController givenClassDescriptionTextFieldController = TextEditingController();
+
   Map<String, dynamic> codeToDisplay = {};
 
   String codeToShow = "XXXXXX";
@@ -36,6 +42,13 @@ class RowCallCreate extends State<RowCallCreateState> with AutomaticKeepAliveCli
     super.initState();
     fetchDataFromAPI();
   }
+
+  void clearTextFields() {
+      setState(() {
+        givenClassDescriptionTextFieldController.clear();
+        givenClassTitleTextFieldController.clear();
+      });
+    }
 
   Future<void> fetchDataFromAPI() async {
     final response = await http.post(
@@ -52,10 +65,12 @@ class RowCallCreate extends State<RowCallCreateState> with AutomaticKeepAliveCli
   }
 
   Future<void> updateScreenWithCode() async {
-   final url = Uri.parse('https://chamada-backend-sy8c.onrender.com/fazer_chamada');
+   final url = Uri.parse('https://chamada-backend-sy8c.onrender.com/fazer_chamada');   
 
     final response = await http.post(url , body: {
               'materia_escolhida': selectedDisciplineOnDropdownList.toString(),
+              'titulo': givenClassTitle.toString(),
+              'descricao': givenClassDescription.toString()
             });
 
     setState(() {
@@ -64,13 +79,25 @@ class RowCallCreate extends State<RowCallCreateState> with AutomaticKeepAliveCli
     });
   }
 
+  Future<void> colecttiveRowCall() async {
+   final url = Uri.parse('https://chamada-backend-sy8c.onrender.com/presenca_coletiva');    
+
+    final response = await http.post(url , body: {
+              'materia': selectedDisciplineOnDropdownList.toString(),
+              'titulo': givenClassTitle.toString(),
+              'descricao': givenClassDescription.toString()
+            });
+
+    clearTextFields();
+  }
+
     Future<void> confirmPopUpDialog(BuildContext context) async {
     return showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
           title: const Text('Chamada criada com sucesso!'),
-          content: const Text('Atualizando a tela com o código.'),  
+          content: const Text('A presença foi disponibilizada.'),
           actions: <Widget>[
               popOutShowDialog(context)
             ],
@@ -85,7 +112,7 @@ class RowCallCreate extends State<RowCallCreateState> with AutomaticKeepAliveCli
       builder: (context) {
         return AlertDialog(
           title: const Text('Erro ao criar chamada'),
-          content: const Text('A matéria não foi selecionada.'),
+          content: const Text('Há campos inválidos/não preenchidos.'),
           actions: <Widget>[
               popOutShowDialog(context)
             ],
@@ -151,6 +178,45 @@ class RowCallCreate extends State<RowCallCreateState> with AutomaticKeepAliveCli
       return Text(codeToShow, style: codeStyle);
     }
 
+    SizedBox givenClassTitleTextField() {
+      return SizedBox(
+        width: screenHeight * 0.5,
+        child: TextField(
+          onChanged: (text) {
+            givenClassTitle = text;  
+          },
+          controller: givenClassTitleTextFieldController,
+          decoration: InputDecoration(
+            border: OutlineInputBorder(
+              borderSide: const BorderSide(width: 3),
+              borderRadius: BorderRadius.circular(20.0),
+            ),
+            labelText: 'Título da aula dada',
+          ),
+        ),
+      );
+    }
+
+    SizedBox givenClassDescriptionTextField() {
+      return SizedBox(
+        width: screenHeight * 0.5,
+        child: TextField(
+          onChanged: (text) {
+            givenClassDescription = text;
+          },
+          controller: givenClassDescriptionTextFieldController,
+          maxLines: null,
+          decoration: InputDecoration(
+            border: OutlineInputBorder(
+              borderSide: const BorderSide(width: 3),
+              borderRadius: BorderRadius.circular(20.0),
+            ),
+            labelText: 'Descrição do conteúdo dado',
+          ),
+        ),
+      );
+    }
+
     ButtonTheme buttonCreateCodeForRowCall() {
       return ButtonTheme(
         minWidth: screenHeight * 0.2,
@@ -158,11 +224,15 @@ class RowCallCreate extends State<RowCallCreateState> with AutomaticKeepAliveCli
         child: ElevatedButton(
           onPressed: () async {
 
-            if(selectedDisciplineOnDropdownList == "Escolha a matéria"){
+            if(selectedDisciplineOnDropdownList == "Escolha a matéria" || 
+            givenClassTitleTextFieldController.text.isEmpty || 
+            givenClassDescriptionTextFieldController.text.isEmpty){ 
+
               if (!mounted) return;
-                createErrorPopUpDialog(context);
+                createErrorPopUpDialog(context);        
             } else {
-              updateScreenWithCode();
+              updateScreenWithCode();                                   
+              clearTextFields();
               if (!mounted) return;
                 confirmPopUpDialog(context);
             }
@@ -175,6 +245,43 @@ class RowCallCreate extends State<RowCallCreateState> with AutomaticKeepAliveCli
           ),
           child: const Text(
             'Criar código da chamada',
+            style: TextStyle(
+              fontSize: 18.0,
+              color: Colors.white,
+            ),
+          ),
+        ),
+      );
+    }
+
+    ButtonTheme buttonCollectiveRowCall() {
+      return ButtonTheme(
+        minWidth: screenHeight * 0.2,
+        height: screenHeight * 0.1,
+        child: ElevatedButton(
+          onPressed: () async {//colocar condiçioes de campos de texto vazio + janela de confirmação + limpa de textos
+
+          if(selectedDisciplineOnDropdownList == "Escolha a matéria" || 
+            givenClassTitleTextFieldController.text.isEmpty || 
+            givenClassDescriptionTextFieldController.text.isEmpty){ 
+              
+              if (!mounted) return;
+                createErrorPopUpDialog(context);        
+            } else {
+              colecttiveRowCall();                                   
+              clearTextFields();
+              if (!mounted) return;
+                confirmPopUpDialog(context);
+            }
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.greenAccent,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20.0),
+            ),
+          ),
+          child: const Text(
+            'Gerar presença coletiva',
             style: TextStyle(
               fontSize: 18.0,
               color: Colors.white,
@@ -198,8 +305,14 @@ class RowCallCreate extends State<RowCallCreateState> with AutomaticKeepAliveCli
               SizedBox(height: screenHeight * 0.05),
               dropDownDisciplineButton(),
               SizedBox(height: screenHeight * 0.05),
+              givenClassTitleTextField(),
+              SizedBox(height: screenHeight * 0.04),
+              givenClassDescriptionTextField(),
+              SizedBox(height: screenHeight * 0.04),
               buttonCreateCodeForRowCall(),
-              SizedBox(height: screenHeight * 0.08),
+              SizedBox(height: screenHeight * 0.04),
+              buttonCollectiveRowCall(),
+              SizedBox(height: screenHeight * 0.04),
               codeText()
             ],
           ),

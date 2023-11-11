@@ -1,8 +1,10 @@
+import 'package:aplicativo_de_chamada/classes_student_was_absent.dart';
 import 'package:flutter/material.dart';
 import 'disciplines_list.dart';
 import 'user_information.dart';
 import 'presence_for_student.dart';
 import 'detailed_presence_for_student.dart';
+import 'classes_student_was_in.dart';
 
 class StudentPageStateCall extends StatefulWidget{
 
@@ -21,9 +23,11 @@ class StudentPage extends State<StudentPageStateCall>{
   List<Widget> getWidgetOptions() {
     return [
       DisciplineListState(emailUser: widget.emailUser),
+      ClassesStudentWasInListState(emailUser: widget.emailUser),
       PresenceForStudentCheckState(emailUser: widget.emailUser),
+      ClassesStudentWasAbsentListState(emailUser: widget.emailUser),
       DetailedPresenceForStudentState(emailUser: widget.emailUser),
-      UserInformationPageState(emailUser: widget.emailUser)
+      UserInformationPageState(emailUser: widget.emailUser),
     ];
   }
 
@@ -58,8 +62,16 @@ class StudentPage extends State<StudentPageStateCall>{
             label: 'Matérias',
           ),
           BottomNavigationBarItem(
+            icon: Icon(Icons.addchart_rounded),
+            label: 'Presente',
+          ),
+          BottomNavigationBarItem(
             icon: Icon(Icons.add_circle_outline_rounded),
             label: 'Pegar presença',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.clear_rounded),
+            label: 'Ausente',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.align_horizontal_left_rounded ),
