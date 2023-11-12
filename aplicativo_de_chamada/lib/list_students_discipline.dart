@@ -55,7 +55,13 @@ class ListStudentsForEachDiscipline
     });
   }
 
-  Future<void> showRepresentativePopUpDialog(BuildContext context, String representativeStudent) async {
+  Future<void> showRepresentativePopUpDialog(BuildContext context, String representativeStudent, String isRepresentant) async {
+      if(isRepresentant == "True"){
+        representativeButtonVisibility = false;
+      } else {
+        representativeButtonVisibility = true;
+      }
+      
       return showDialog(
         context: context,
         builder: (context) {
@@ -154,6 +160,8 @@ class ListStudentsForEachDiscipline
 
       if (studentsSubscribedOnDisciplineListDynamic[index][3] == "True"){
         style = const TextStyle(fontSize: 20, fontWeight: FontWeight.normal, color: Colors.red);
+      } else {
+        style = const TextStyle(fontSize: 20, fontWeight: FontWeight.normal, color: Colors.black);
       }
 
       return Column(children: [
@@ -191,7 +199,7 @@ class ListStudentsForEachDiscipline
                 ]),
 
                 onTap: () async {
-                  showRepresentativePopUpDialog(context, studentsSubscribedOnDisciplineListDynamic[index][0]);
+                  showRepresentativePopUpDialog(context, studentsSubscribedOnDisciplineListDynamic[index][0], studentsSubscribedOnDisciplineListDynamic[index][3]);
             },
           ),
         ),
