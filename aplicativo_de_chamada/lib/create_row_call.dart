@@ -24,6 +24,8 @@ class RowCallCreate extends State<RowCallCreateState> with AutomaticKeepAliveCli
   List<dynamic> disciplinesForTeacherListDynamic = [];
   List<String> disciplinesForTeacherList = [];
 
+  bool closeRowCallButtonVisibility = false;
+
   int selectedIndexOnDropdownList = 0;
   String selectedDisciplineOnDropdownList = "Escolha a matéria";
 
@@ -82,7 +84,7 @@ class RowCallCreate extends State<RowCallCreateState> with AutomaticKeepAliveCli
   Future<void> colecttiveRowCall() async {
    final url = Uri.parse('https://chamada-backend-sy8c.onrender.com/presenca_coletiva');    
 
-    final response = await http.post(url , body: {
+    await http.post(url , body: {
               'materia': selectedDisciplineOnDropdownList.toString(),
               'titulo': givenClassTitle.toString(),
               'descricao': givenClassDescription.toString()
@@ -92,6 +94,7 @@ class RowCallCreate extends State<RowCallCreateState> with AutomaticKeepAliveCli
   }
 
     Future<void> confirmPopUpDialog(BuildContext context) async {
+
     return showDialog(
       context: context,
       builder: (context) {
@@ -235,6 +238,9 @@ class RowCallCreate extends State<RowCallCreateState> with AutomaticKeepAliveCli
               clearTextFields();
               if (!mounted) return;
                 confirmPopUpDialog(context);
+                setState(() {
+                closeRowCallButtonVisibility = true;
+              });
             }
           },
           style: ElevatedButton.styleFrom(
@@ -259,7 +265,7 @@ class RowCallCreate extends State<RowCallCreateState> with AutomaticKeepAliveCli
         minWidth: screenHeight * 0.2,
         height: screenHeight * 0.1,
         child: ElevatedButton(
-          onPressed: () async {//colocar condiçioes de campos de texto vazio + janela de confirmação + limpa de textos
+          onPressed: () async {
 
           if(selectedDisciplineOnDropdownList == "Escolha a matéria" || 
             givenClassTitleTextFieldController.text.isEmpty || 
@@ -291,6 +297,41 @@ class RowCallCreate extends State<RowCallCreateState> with AutomaticKeepAliveCli
       );
     }
 
+    Visibility buttonCloseRowCall() {
+
+      return Visibility(
+        visible: closeRowCallButtonVisibility,
+        child: ButtonTheme(
+        minWidth: screenHeight * 0.2,
+        height: screenHeight * 0.1,
+        child: ElevatedButton(
+          onPressed: () async {
+            final url = Uri.parse('https://chamada-backend-sy8c.onrender.com/fechar_chamada');
+
+              await http.post(url, body: {'materia': selectedDisciplineOnDropdownList});
+              setState(() {
+                closeRowCallButtonVisibility = false;
+                codeToShow = "XXXXXX";
+              });
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.greenAccent,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20.0),
+            ),
+          ),
+          child: const Text(
+            'Fechar chamada',
+            style: TextStyle(
+              fontSize: 18.0,
+              color: Colors.white,
+            ),
+          ),
+        ),
+      )
+      );
+    }
+
     return Scaffold(
       body: SingleChildScrollView(
         child: Padding(
@@ -302,7 +343,7 @@ class RowCallCreate extends State<RowCallCreateState> with AutomaticKeepAliveCli
                   alignment: Alignment.center,
                   child: Text("Gerar chamada",
                       style: titleStyle, textAlign: TextAlign.center)),
-              SizedBox(height: screenHeight * 0.05),
+              SizedBox(height: screenHeight * 0.03),
               dropDownDisciplineButton(),
               SizedBox(height: screenHeight * 0.05),
               givenClassTitleTextField(),
@@ -312,7 +353,9 @@ class RowCallCreate extends State<RowCallCreateState> with AutomaticKeepAliveCli
               buttonCreateCodeForRowCall(),
               SizedBox(height: screenHeight * 0.04),
               buttonCollectiveRowCall(),
-              SizedBox(height: screenHeight * 0.04),
+              SizedBox(height: screenHeight * 0.03),
+              buttonCloseRowCall(),
+              SizedBox(height: screenHeight * 0.03),
               codeText()
             ],
           ),

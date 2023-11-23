@@ -1,40 +1,52 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter/services.dart';
 import 'dart:convert';
 
-class PresenceForStudentCheckState extends StatefulWidget {
+class SugestionScreenCreateState extends StatefulWidget {
 
   final String emailUser;
 
-  const PresenceForStudentCheckState({super.key, required this.emailUser});
+  const SugestionScreenCreateState({super.key, required this.emailUser});
 
   @override
-  State<PresenceForStudentCheckState> createState() => CodeInsertCheck();
+  State<SugestionScreenCreateState> createState() => SugestionScreenCreate();
 }
 
-class CodeInsertCheck extends State<PresenceForStudentCheckState> {
+class SugestionScreenCreate extends State<SugestionScreenCreateState> with AutomaticKeepAliveClientMixin {
+
+  @override
+  bool get wantKeepAlive => true;
+
   late double screenHeight;
   late double fontSizeAsPercentage;
   late TextStyle titleStyle;
 
-    String codeInserted = '';
+  List<dynamic> dataListDisciplinesDynamic = [];
+  List<String> disciplinesForStudentList = [];
 
-    TextEditingController codeTextFieldController = TextEditingController();
+  int selectedIndexOnDropdownList = 0;
+  String selectedDisciplineOnDropdownList = "Escolha a matéria";
 
-    String errorTextValDiscipline = '';
+  String sugestionDescription = '';
 
-    List<dynamic> dataListDisciplinesDynamic = [];
-    List<String> disciplinesForStudentList = [];
+  TextEditingController sugestionTitleTextFieldController = TextEditingController();
+  TextEditingController sugestionDescriptionTextFieldController = TextEditingController();
 
-    int selectedIndexOnDropdownList = 0;
-    String selectedDisciplineOnDropdownList = "Escolha a matéria";
+  Map<String, dynamic> codeToDisplay = {};
 
-    @override
-    void initState() {
-      super.initState();
-      fetchDataFromAPI();
+  String codeToShow = "XXXXXX";
+
+  @override
+  void initState() {
+    super.initState();
+    fetchDataFromAPI();
   }
+
+  void clearTextFields() {
+      setState(() {
+        sugestionDescriptionTextFieldController.clear();
+      });
+    }
 
   Future<void> fetchDataFromAPI() async {
     final response = await http.post(
@@ -50,13 +62,36 @@ class CodeInsertCheck extends State<PresenceForStudentCheckState> {
     });
   }
 
+  Future<void> createComplient() async {
+   final url = Uri.parse('https://chamada-backend-sy8c.onrender.com/enviar_solicitacao');    
+
+    await http.post(url , body: {
+              'nomeAluno': widget.emailUser,
+              'nomeMateria': selectedDisciplineOnDropdownList,
+              'descricao': sugestionDescription
+            });
+
+    clearTextFields();
+  }
+
+    TextButton popOutShowDialog(BuildContext context){
+      return TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            );
+    }
+
     Future<void> confirmPopUpDialog(BuildContext context) async {
+
+      //colocar para aparecer opção fechar chamada
     return showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Sua presença foi contabilizada!'),
-          content: const Text('Sua frequência na matéria foi atualizada.'),
+          title: const Text('Sugestão enviada com sucesso!'),
+          content: const Text('Sua sugestão foi enviada'),
           actions: <Widget>[
               popOutShowDialog(context)
             ],
@@ -70,8 +105,8 @@ class CodeInsertCheck extends State<PresenceForStudentCheckState> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Erro ao contabilizar presença'),
-          content: const Text('O campo matéria ou o código não são válidos'),
+          title: const Text('Erro ao enviar sugestão'),
+          content: const Text('Há campos inválidos/não preenchidos.'),
           actions: <Widget>[
               popOutShowDialog(context)
             ],
@@ -80,33 +115,19 @@ class CodeInsertCheck extends State<PresenceForStudentCheckState> {
       );
     }
 
-    TextButton popOutShowDialog(BuildContext context){
-      return TextButton(
-              child: const Text('OK'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            );
-    }
-
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     screenHeight = MediaQuery.of(context).size.height;
-
-    TextStyle titleStyle = TextStyle(
-        fontFamily: 'DancingScript',
-        fontSize: screenHeight * 0.07,
-        fontWeight: FontWeight.bold,
-        color: Colors.black);
 
     TextStyle dropdownStyle =
         const TextStyle(fontWeight: FontWeight.normal, color: Colors.black);
 
-    void clearTextFields() {
-      setState(() {
-        codeTextFieldController.clear();
-      });
-    }
+    TextStyle titleStyle = TextStyle(
+        fontFamily: 'DancingScript',
+        fontSize: screenHeight * 0.05,
+        fontWeight: FontWeight.bold,
+        color: Colors.black);
 
     Center dropDownDisciplineButton() {
       return Center(
@@ -132,65 +153,45 @@ class CodeInsertCheck extends State<PresenceForStudentCheckState> {
         ),
       );
     }
-    
-    SizedBox codeToInsertTextField() {
+
+    SizedBox sugestionDescriptionTextField() {
       return SizedBox(
         width: screenHeight * 0.5,
-        height: screenHeight * 0.2,
         child: TextField(
-          keyboardType: TextInputType.number,
-          inputFormatters: <TextInputFormatter>[
-            FilteringTextInputFormatter.digitsOnly
-          ],
           onChanged: (text) {
-            codeInserted = text;
+            sugestionDescription = text;
           },
-          enableInteractiveSelection: false,
-          controller: codeTextFieldController,
-          textAlign: TextAlign.center,
+          controller: sugestionDescriptionTextFieldController,
+          maxLines: null,
           decoration: InputDecoration(
-            errorText: errorTextValDiscipline.isEmpty ? null : errorTextValDiscipline,
             border: OutlineInputBorder(
               borderSide: const BorderSide(width: 3),
               borderRadius: BorderRadius.circular(20.0),
             ),
-            label:const Center(
-              child: Text("Código da presença"),
+            labelText: 'Escreva aqui sua sugestão',
           ),
-          ),
-          style: TextStyle(fontSize: screenHeight * 0.07),
         ),
       );
     }
 
-    ButtonTheme buttonGetPresence() {
+
+     ButtonTheme buttonSendSugestion() {
       return ButtonTheme(
         minWidth: screenHeight * 0.2,
         height: screenHeight * 0.1,
         child: ElevatedButton(
           onPressed: () async {
 
-            if(codeTextFieldController.text.isEmpty || selectedDisciplineOnDropdownList == "Escolha a matéria"){
-                createErrorPopUpDialog(context);
-            } else {
-              final url = Uri.parse('https://chamada-backend-sy8c.onrender.com/verificar_codigo_inserido_pelo_aluno');
-
-              final response = await http.post(url, body: {
-                'email': widget.emailUser,
-                'code': codeInserted,
-                'materia': selectedDisciplineOnDropdownList
-              });
-
-              final jsonResponse = json.decode(response.body);
-              String confirmPresence = jsonResponse['presenca'];
+            if(selectedDisciplineOnDropdownList == "Escolha a matéria" || 
+            sugestionDescriptionTextFieldController.text.isEmpty){ 
 
               if (!mounted) return;
-                if(confirmPresence == "OK"){
-                  confirmPopUpDialog(context);
-                } else {
-                  createErrorPopUpDialog(context);
-                }
+                createErrorPopUpDialog(context);        
+            } else {                                
               clearTextFields();
+              createComplient();
+              if (!mounted) return;
+                confirmPopUpDialog(context);
             }
           },
           style: ElevatedButton.styleFrom(
@@ -200,7 +201,7 @@ class CodeInsertCheck extends State<PresenceForStudentCheckState> {
             ),
           ),
           child: const Text(
-            'Contar presença',
+            'Enviar sugestão',
             style: TextStyle(
               fontSize: 18.0,
               color: Colors.white,
@@ -209,7 +210,6 @@ class CodeInsertCheck extends State<PresenceForStudentCheckState> {
         ),
       );
     }
-
     return Scaffold(
       body: SingleChildScrollView(
         child: Padding(
@@ -217,16 +217,16 @@ class CodeInsertCheck extends State<PresenceForStudentCheckState> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              Align(
+             Align(
                   alignment: Alignment.center,
-                  child: Text("Pegar presença",
+                  child: Text("Fazer sugestão",
                       style: titleStyle, textAlign: TextAlign.center)),
-              const SizedBox(height: 30),
+              SizedBox(height: screenHeight * 0.05),
               dropDownDisciplineButton(),
-              const SizedBox(height: 30),
-              codeToInsertTextField(),
-              const SizedBox(height: 20),
-              buttonGetPresence()//trocar para botao que envia o código
+              SizedBox(height: screenHeight * 0.05),
+              sugestionDescriptionTextField(),
+              SizedBox(height: screenHeight * 0.04),
+              buttonSendSugestion()
             ],
           ),
         ),

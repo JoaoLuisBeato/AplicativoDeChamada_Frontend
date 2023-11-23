@@ -5,6 +5,8 @@ import 'user_information.dart';
 import 'presence_for_student.dart';
 import 'detailed_presence_for_student.dart';
 import 'classes_student_was_in.dart';
+import 'student_complient.dart';
+import 'list_sugestions_for_representant.dart';
 
 class StudentPageStateCall extends StatefulWidget{
 
@@ -24,9 +26,11 @@ class StudentPage extends State<StudentPageStateCall>{
     return [
       DisciplineListState(emailUser: widget.emailUser),
       ClassesStudentWasInListState(emailUser: widget.emailUser),
-      PresenceForStudentCheckState(emailUser: widget.emailUser),
       ClassesStudentWasAbsentListState(emailUser: widget.emailUser),
+      PresenceForStudentCheckState(emailUser: widget.emailUser),
       DetailedPresenceForStudentState(emailUser: widget.emailUser),
+      SugestionScreenCreateState(emailUser: widget.emailUser),
+      SugestionListForRepresentantState(emailUser: widget.emailUser),
       UserInformationPageState(emailUser: widget.emailUser),
     ];
   }
@@ -66,16 +70,24 @@ class StudentPage extends State<StudentPageStateCall>{
             label: 'Presente',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.add_circle_outline_rounded),
-            label: 'Pegar presença',
-          ),
-          BottomNavigationBarItem(
             icon: Icon(Icons.clear_rounded),
             label: 'Ausente',
           ),
           BottomNavigationBarItem(
+            icon: Icon(Icons.add_circle_outline_rounded),
+            label: 'Pegar presença',
+          ),
+          BottomNavigationBarItem(
             icon: Icon(Icons.align_horizontal_left_rounded ),
             label: 'Frequência',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.bookmark_rounded),
+            label: 'Sugestões',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.attach_email_rounded),
+            label: 'Sala',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.account_circle),

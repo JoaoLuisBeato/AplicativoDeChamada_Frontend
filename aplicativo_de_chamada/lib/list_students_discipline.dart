@@ -21,6 +21,7 @@ class ListStudentsForEachDiscipline
   List<dynamic> studentsSubscribedOnDisciplineListDynamic = [];
 
   bool representativeButtonVisibility = true;
+  bool removeRepresentativeButtonVisibility = false;
 
   int selectedIndexOnDropdownList = 0;
   String selectedDisciplineOnDropdownList = "Escolha a matéria";
@@ -55,11 +56,12 @@ class ListStudentsForEachDiscipline
     });
   }
 
-  Future<void> showRepresentativePopUpDialog(BuildContext context, String representativeStudent, String isRepresentant) async {
+  Future<void> showRepresentativePopUpDialog(BuildContext context, String representativeStudent, String isRepresentant, String selectedDisciplineOnDropdownList) async {
       if(isRepresentant == "True"){
         representativeButtonVisibility = false;
+        removeRepresentativeButtonVisibility = true;
       } else {
-        representativeButtonVisibility = true;
+        removeRepresentativeButtonVisibility = false;
       }
       
       return showDialog(
@@ -70,14 +72,15 @@ class ListStudentsForEachDiscipline
             content: const Text('Escolha uma das opções abaixo'),
             actions: <Widget>[
               popOutShowDialog(context),
-              representativeButtonShowDialog(context, representativeStudent)
+              representativeButtonShowDialog(context, representativeStudent, selectedDisciplineOnDropdownList),
+              removeRepresentativeButtonShowDialog(context, representativeStudent, selectedDisciplineOnDropdownList)
             ],
           );
         },
       );
     }
 
-    Visibility representativeButtonShowDialog(BuildContext context, String representativeStudent) {
+    Visibility representativeButtonShowDialog(BuildContext context, String representativeStudent, String selectedDisciplineOnDropdownList) {
 
       return Visibility(
         visible: representativeButtonVisibility,
@@ -88,8 +91,33 @@ class ListStudentsForEachDiscipline
 
             await http.post(url, body: {
               'Nome': representativeStudent,
+              'Materia': selectedDisciplineOnDropdownList
             });
             representativeButtonVisibility = false;
+            removeRepresentativeButtonVisibility = true;
+
+          if (!mounted) return;
+            Navigator.of(context).pop();
+        },
+      ),
+      );
+    }
+
+    Visibility removeRepresentativeButtonShowDialog(BuildContext context, String representativeStudent, String selectedDisciplineOnDropdownList) {
+
+      return Visibility(
+        visible: removeRepresentativeButtonVisibility,
+        child: TextButton(
+        child: const Text('Remover'),
+        onPressed: () async {
+            final url = Uri.parse('https://chamada-backend-sy8c.onrender.com/remover_representante');
+
+            await http.post(url, body: {
+              'Nome': representativeStudent,
+              'Materia': selectedDisciplineOnDropdownList
+            });
+            representativeButtonVisibility = true;
+            removeRepresentativeButtonVisibility = false;
 
           if (!mounted) return;
             Navigator.of(context).pop();
@@ -199,7 +227,7 @@ class ListStudentsForEachDiscipline
                 ]),
 
                 onTap: () async {
-                  showRepresentativePopUpDialog(context, studentsSubscribedOnDisciplineListDynamic[index][0], studentsSubscribedOnDisciplineListDynamic[index][3]);
+                  showRepresentativePopUpDialog(context, studentsSubscribedOnDisciplineListDynamic[index][0], studentsSubscribedOnDisciplineListDynamic[index][3], selectedDisciplineOnDropdownList);
             },
           ),
         ),
