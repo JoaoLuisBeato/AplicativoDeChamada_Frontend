@@ -60,7 +60,7 @@ class ClassesStudentWasInList extends State<ClassesStudentWasInListState> {
         body: {
           'email': widget.emailUser,
           'materia': selectedDisciplineOnDropdownList
-        }); // vai mudar materia talvez
+        });
 
     setState(() {
       dataListClassesStudentWasIn = json.decode(response.body);

@@ -17,6 +17,9 @@ class ClassesStudentWasAbsentList extends State<ClassesStudentWasAbsentListState
   late double fontSizeAsPercentage;
   late TextStyle titleStyle;
 
+  String commentTextToSend = "";
+  bool sendButtonVisibility = false;
+
   List<dynamic> dataListDisciplinesDynamic = [];
   List<String> disciplinesForStudentList = [];
 
@@ -66,6 +69,143 @@ class ClassesStudentWasAbsentList extends State<ClassesStudentWasAbsentListState
       dataListClassesStudentWasAbsent = json.decode(response.body);
     });
   }
+
+  Future<void> sendRepositionForClass(int index) async {
+    final response = await http.post(Uri.parse('https://chamada-backend-sy8c.onrender.com/enviar_solicitacao_reposicao'),
+        body: {
+          'motivo': commentTextToSend,
+          'codigo_materia': selectedDisciplineOnDropdownList,
+          'codigo_presenca': dataListClassesStudentWasAbsent[index]['CodigoPresenca'],
+          'codigo_usuario': widget.emailUser,
+        });
+    Map<String, dynamic> existentComment = json.decode(response.body);
+
+    if(existentComment['enviar_solicitacao_reposical'] == "existente"){
+      if (!mounted) return;
+        showSendCommentExistentDialog(context);
+    } else {
+      if (!mounted) return;
+        showSendCommentSuccessDialog(context);
+    }
+  }
+
+  TextButton popOutShowDialog(BuildContext context){
+      return TextButton(
+              child: const Text('Voltar'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            );
+    }
+
+    Future<void> showSendCommentExistentDialog(BuildContext context) async {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Erro no envio do comentário'),
+          content: const Text('Já foi enviado um comentário correspondente a aula.'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> showSendCommentErrorDialog(BuildContext context) async {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Erro no envio do comentário'),
+          content: const Text('Há campos inválidos ou não preenchidos.'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> showSendCommentSuccessDialog(BuildContext context) async {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Comentário enviado!'),
+          content: const Text('O comentário já foi enviado ao professor.'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  TextButton sendCommentShowDialog(BuildContext context, int index) {
+
+      return  TextButton(
+        child: const Text('Enviar'),
+        onPressed: () async {
+            if(commentTextToSend != "" || selectedDisciplineOnDropdownList != "Escolha a matéria"){
+              sendRepositionForClass(index);
+              Navigator.of(context).pop();
+            } else {
+              showSendCommentErrorDialog(context);
+          }
+        },
+      );
+    }
+
+  Future<void> showCommentPopUpDialog(BuildContext context, int index) async {
+      
+      SizedBox commentTextField = SizedBox(
+        width: screenHeight * 0.5,
+        child: TextField(
+          onChanged: (text) {
+            commentTextToSend = text;
+          },
+          maxLines: null,
+          decoration: InputDecoration(
+            border: OutlineInputBorder(
+              borderSide: const BorderSide(width: 3),
+              borderRadius: BorderRadius.circular(20.0),
+            ),
+            labelText: 'Justificativa da falta',
+          ),
+        ),
+      );
+
+      return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Enviar comentário?'),
+            content: commentTextField,
+            actions: <Widget>[
+              popOutShowDialog(context),
+              sendCommentShowDialog(context, index)
+            ],
+          );
+        },
+      );
+    }
 
   @override
   Widget build(BuildContext context) {
@@ -142,6 +282,9 @@ class ClassesStudentWasAbsentList extends State<ClassesStudentWasAbsentListState
                     child: Text(dataListClassesStudentWasAbsent[index]['Descricao']),
                   ),
                 ]),
+                onTap: () async {
+                  showCommentPopUpDialog(context, index);
+                },
           ),
         ),
         const Padding(
