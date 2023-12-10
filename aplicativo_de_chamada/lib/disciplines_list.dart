@@ -123,7 +123,7 @@ class DisciplineList extends State<DisciplineListState> {
                   child: Align(
                     alignment: Alignment.topRight,
                     child: Text(
-                      "ID: " + dataListDisciplines[index]['codigo_materias'],
+                      "ID: ${dataListDisciplines[index]['codigo_materias']}",
                       style: idStyle, 
                     ),
                   ),
